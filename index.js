@@ -12,22 +12,33 @@ import cheerio from 'cheerio';
     const $ = cheerio.load(html);
 
     const newsItems = [];
+    const newsTitle = [];
 
-    $('.titleline ').each((index, element) => {
+    $('.titleline a').each((index, element) => {
       const title = $(element).text();
-      const url = $(element).find('a').attr('href');
-      const upvotes = $(element).find('.score').text();
-      const comments = $(element).find('.subtext').text();
-      const postedDate = $(element).find('.age a').text();
+      const url = $(element).attr('href');
+      
       
       // Extract other details (upvotes, comments, posted date)
       // ...
 
-      newsItems.push({ title, url  , upvotes , comments , postedDate});
+      newsTitle.push({ title, url});
     });
 
+    $('.subtext').each((index, element) => {
+        const upvotes = $(element).find('.score').text();
+        const comments = $(element).find('a').text();
+        const postedDate = $(element).find('.age a').text();
+        
+        
+        // Extract other details (upvotes, comments, posted date)
+        // ...
+  
+        newsItems.push({ upvotes , comments , postedDate});
+      });
+
     // Process news items (save to database or further processing)
-    console.log(newsItems);
+    console.log(newsItems , newsTitle);
   });
 
 
