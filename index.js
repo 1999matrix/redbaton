@@ -1,45 +1,24 @@
-import request from 'request';
-import cheerio from 'cheerio';
+import express from "express";
+import mongoose, { connect } from "mongoose";
+import dotenv from "dotenv";
+// import routes from "./router/router.js";
+const app = express();
 
+dotenv.config();
+const PORT = process.env.PORT || 4000;
+const mongoConnect = async () => {
+  try {
+    await mongoose.connect(process.env.MongoUrl);
+    console.log("success");
+  } catch (error) {
+    throw error;
+  }
+};
 
-  const url = 'https://news.ycombinator.com/';
-  request(url, (error, response, html) => {
-    if (error) {
-      console.error('Error fetching data:', error);
-      return;
-    }
+app.use(express.json());
+// app.use("/api", routes);
 
-    const $ = cheerio.load(html);
-
-    const newsItems = [];
-    const newsTitle = [];
-
-    $('.titleline a').each((index, element) => {
-      const title = $(element).text();
-      const url = $(element).attr('href');
-      
-      
-      // Extract other details (upvotes, comments, posted date)
-      // ...
-
-      newsTitle.push({ title, url});
-    });
-
-    $('.subtext').each((index, element) => {
-        const upvotes = $(element).find('.score').text();
-        const comments = $(element).find('a').text();
-        const postedDate = $(element).find('.age a').text();
-        
-        
-        // Extract other details (upvotes, comments, posted date)
-        // ...
-  
-        newsItems.push({ upvotes , comments , postedDate});
-      });
-
-    // Process news items (save to database or further processing)
-    console.log(newsItems , newsTitle);
-  });
-
-
-
+app.listen(PORT, () => {
+  mongoConnect();
+  console.log("connected");
+});
